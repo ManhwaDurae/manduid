@@ -1,0 +1,14 @@
+extends ./layouts/card_centered.pug
+
+block head
+    link(rel="stylesheet", href="/css/error_card_centered.css")
+
+block card-body
+    p.title 오류
+    if status
+        p.subtitle HTTP Error #{status}
+    if error
+        p= error
+    else
+        p 알 수 없는 오류가 발생했습니다.
+    

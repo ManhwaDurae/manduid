@@ -1,0 +1,26 @@
+extends ./layouts/card_centered.pug
+
+block card-body
+    p.title 만화두레
+    p.subtitle 만화동아리
+    if user
+        .content
+            p
+                | 외부고리
+                ul
+                    li
+                        a(href="https://wiki.caumd.club") 위키
+                    li
+                        a(href="https://bbs.caumd.club") 게시판
+                | 관리
+                ul
+                    li
+                        a(href="/logout") 로그아웃
+                    li
+                        a(href="/change_password") 비밀번호 변경
+                    if isExecutive || isPresident
+                        li
+                            a(href="/admin") 관리
+
+    else
+        p #[a(href="/login") 로그인]을 먼저 해주세요.

@@ -1,0 +1,54 @@
+extends layout.pug
+
+block body
+    nav.navbar.is-black
+        .navbar-brand
+            a.navbar-item(href="/admin") 만화두레 회원관리
+    .container(style="margin-top: 10px;")
+        .columns
+            .column.is-3
+                aside.menu
+                    p.menu-label 회원관리
+                    ul.menu-list
+                        li
+                            a(href="/admin/roll/new") 회원추가
+                        li
+                            a(href="/admin/roll") 회원명부
+                            ul
+                                li
+                                    a(href="/admin/roll?rollType=RegularMember") 정회원명부
+                                li
+                                    a(href="/admin/roll?rollType=AssociateMember") 준회원명부
+                                li
+                                    a(href="/admin/roll?rollType=HonoraryMember") 명예회원명부
+                        li
+                            a(href="/admin/roll?rollType=Expulsive") 제적부
+                        li
+                            a(href="/admin/roll?rollType=PermanentExpulsive") 제명부
+                    p.menu-label 입부원서관리
+                    ul.menu-list
+                        li
+                            a(href="/admin/applications") 입부/재입부원서
+                        li 
+                            a(href="/admin/applications/acceptances") 입부/재입부 허가내역
+                    p.menu-label 운영위원 관리
+                    ul.menu-list
+                        li
+                            a(href="/admin/executives/handover") 회장직 인수인계
+                        li
+                            a(href="/admin/executives/list") 운영위원 목록
+                        li
+                            a(href="/admin/executives/appoint") 운영위원 선임
+                        li
+                            a(href="/admin/executives/types") 운영위원 권한 관리
+                    p.menu-label 시스템 관리
+                    ul.menu-list
+                        li
+                            a(href="/admin/oidc") OpenID Connect 1.0 Client 관리
+                    p.menu-label 로그아웃
+                    ul.menu-list
+                        li
+                            a(href="/logout") 로그아웃
+            .column.is-9
+                .container
+                    block container-inner

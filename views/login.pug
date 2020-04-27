@@ -1,0 +1,29 @@
+extends ./layouts/card_centered.pug
+
+block card-body
+    p.title 만화두레 로그인
+    if error
+        .notification.is-danger= error
+    p 로그인하세요. 아이디가 없으면 회원가입하세요.
+    form(action='/login', method="POST", enctype="application/x-www-form-urlencoded")
+        if redirect
+            input(type="hidden", name="redirect", value=redirect)
+        .field
+            label.label 아이디
+            .control
+                input.input(type="text", name="id", placeholder="아이디", required)
+        .field
+            label.label 비밀번호
+            .control
+                input.input(type="password", name="password", placeholder="비밀번호", required)
+        p
+            a(href="https://apply.caumd.club") 동아리 회원이 아니신가요?
+        p
+            a(href="/forgot_password") 비밀번호를 잊으셨나요?
+        input(type="submit", hidden)
+        .field.is-grouped.is-grouped-right
+            .control
+                a(href="/register")
+                    button.button(type="button") 회원가입
+            .control
+                button.button.is-primary(type="submit") 로그인

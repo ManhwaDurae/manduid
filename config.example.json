@@ -1,0 +1,16 @@
+{
+    "databaseUri": "sqlite:debug.db",
+    "smtp": {
+        "pool": true,
+        "host": "smtp.example.com",
+        "port": 465,
+        "secure": true,
+        "auth": {
+            "user": "example@example.com",
+            "pass": "smtp password here"
+        }
+    },
+    "httpPort": 80,
+    "sessionSecret": ["secret"],
+    "oidcSecretKeys": ["secret"]
+}

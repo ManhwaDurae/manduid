@@ -1,0 +1,59 @@
+extends ../../layouts/admin.pug
+
+block container-inner
+    - let formType = form.reapplication ? "재입부" : "입부"
+    if acceptance
+        h1.title #{formType}원서 및 허가내역 개별열람
+        h2.subtitle #{formType}원서 및 허가내역 세부사항입니다.
+    else
+        h1.title #{formType}원서 개별열람
+        h2.subtitle #{formType}원서 세부사항입니다.
+    .table-container
+        table.table.is-hoverable.is-fullwidth
+            tbody
+                tr
+                    th 성명
+                    td= form.name
+                tr
+                    th 학번
+                    td= form.studentId
+                tr
+                    th 학과
+                    td= form.department
+                tr
+                    th 생일
+                    td= form.birthday
+                tr
+                    th 전화번호
+                    td= form.phoneNumber
+                if acceptance
+                    tr
+                        th(colspan="2").has-text-centered 허가내역
+                    tr
+                        th 허가자
+                        td= acceptance.acceptedBy.name
+                    tr
+                        th 허가결과
+                        td
+                            if acceptance.accepted
+                                span(style={color: "green"}) 허가
+                            else
+                                span(style={color: "red"}) 불허
+                    tr
+                        th 허가일시
+                        td= acceptance.acceptedAt
+                    tr
+                        th 허가사유
+                        td= acceptance.reason
+    if !acceptance
+        form(action="/admin/applications/accept", method="POST", enctype="application/x-www-form-urlencoded")
+            input(type="hidden", name="applicationId", value=form.applicationId)
+            .field
+                label.label 사유
+                .control
+                    textarea.textarea(name="reason")
+            .field.is-grouped
+                .control
+                    button.button.is-primary(name="accept", value="yes", type="submit") 승인
+                .control
+                    button.button.is-danger(name="accept", value="no", type="submit") 불허

@@ -1,0 +1,42 @@
+extends ./layouts/card_centered.pug
+
+block card-body
+    p.title 만화두레 회원가입
+    p.subtitle 아이디, 비밀번호 입력
+    if error
+        .notification.is-danger= error
+    p 사용하실 아이디와 비밀번호, 그리고 이메일 주소를 입력해주세요.
+    form(action='/register', method="POST", enctype="application/x-www-form-urlencoded")
+        if redirect
+            input(type="hidden", name="redirect", value=redirect)
+        input(type="hidden", name="step", value="2")
+        input(type="hidden", name="memberId", value=memberId)
+        .field
+            label.label 아이디
+            .control
+                input.input(type="text", name="id", placeholder="아이디", pattern="[0-9a-zA-Z_]+", minlength="5", maxlength="30", required)
+            p.help 아이디는 최소 5글자에서 최대 30글자까지 가능하며, 숫자와 영문 대소문자, 언더스코어(_)만 이용하실 수 있습니다.
+        .field
+            label.label 비밀번호
+            .control
+                input.input(type="password", name="password", minlength="5", placeholder="최소 5자리 이상", required)
+            p.help 비밀번호는 최소 5자리 이상이여야 하며, 그 외 짜증나는 규칙은 없습니다.
+        .field
+            label.label 비밀번호 재확인
+            .control
+                input.input(type="password", name="password_retype", minlength="5", required)
+        .field
+            label.label 이메일주소
+            .control
+                if allowCauMailOnly
+                    input.input(type="email", name="emailAddress", placeholder="예시: example@cau.ac.kr", pattern=".+@cau.ac.kr", required)
+                else
+                    input.input(type="email", name="emailAddress", placeholder="예시: example@example.com", required)
+            if allowCauMailOnly
+                p.help 학교 이메일(@cau.ac.kr)만 사용가능합니다.
+        input(type="submit", hidden)
+        .field.is-grouped.is-grouped-right
+            .control
+                button.button.goBack 뒤로가기
+            .control
+                button.button.is-primary(type="submit") 회원가입

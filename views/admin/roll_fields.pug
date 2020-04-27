@@ -1,0 +1,44 @@
+extends ../layouts/admin.pug
+include ../mixins/memberFormFields.pug
+
+block container-inner
+    - const rollDisplayNames = {'AssociateMember' : '준회원', 'RegularMember' : '정회원', 'HonoraryMember' : '명예회원', 'Explusion' : '제적', 'PermanentExplusion' : '제명'}
+    - const schoolRegistrationDisplayNames = {'Enrolled' : '재학', 'LeaveOfAbsence' : '휴학', 'Graduated' : '졸업', 'Expelled' : '제적'}
+    - readonly = Boolean(readonly)
+    if message
+        .notification= message
+    if error
+        .notification.is-danger= error
+    if add_member
+        h1.title 회원 추가
+        h2.subtitle 오프라인에서 입부신청한 회원을 추가합니다. 온라인 입부신청은 #[a(href="/admin/apply") 입부/재입부원서]에서 승인하시면 자동으로 추가됩니다.
+    else if readonly
+        h1.title 회원명부 개별열람
+        h2.subtitle 특정회원의 명부를 개별열람할 수 있습니다.
+    else
+        h1.title 회원정보/명부 수정
+        h2.subtitle 회원의 개인정보, 학적, 명부를 수정할 수 있습니다.
+     
+    form(method="POST", enctype="application/x-www-form-urlencoded")
+        if user && readonly
+            .field
+                label.label 계정 ID
+                .control
+                    input(readonly, type="input", value=user.id)
+        +memberFormFields(member, readonly)
+        .field
+            label.label 명부
+            .control
+                .select
+                    select(name="roll")
+                        each displayName, value in rollDisplayNames
+                            option(value=value, selected=(roll ? roll.rollType == value : false), readonly=readonly)= displayName
+        .field
+            label.label 학적
+            .control
+                .select
+                    select(name="schoolRegistration")
+                        each displayName, value in schoolRegistrationDisplayNames
+                            option(value=value, selected=(roll ? roll.schoolRegistration == value : false), readonly=readonly)= displayName
+        .field
+            button.button.is-primary(type="submit") 추가

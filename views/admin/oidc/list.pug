@@ -1,0 +1,43 @@
+extends ../../layouts/admin.pug
+
+block container-inner
+    h1.title OpenID Connect 1.0 Client 관리
+    h2.subtitle SSO 로그인 관련 설정입니다. 잘 모르면 건들지 마세요.
+    if message
+        .notification= message
+    if error
+        .notification.is-danger= error
+    .table-container
+        table.table.is-striped.is-fullwidth
+            thead
+                tr
+                    th client_id
+                    th client_secret
+                    th client_name
+                    th redirect_uris
+                    th 수정/삭제
+            tbody
+                for i in clients
+                    tr
+                        td= i.data.client_id
+                        td= i.data.client_secret
+                        td= i.data.client_name
+                        td= i.data.redirect_uris.join('<br>')
+                        td
+                            a(href="/admin/oidc/delete/" + i.id)
+                                button.button.is-small 삭제
+        .box
+            form(action="/admin/oidc/create", method="POST", enctype="application/x-www-form-urlencoded")
+                h3.title OIDC Client 생성
+                p client_id, client_secret은 자동으로 생성되며, grant_types는 ['refresh_token', 'authorization_code']로 고정임.
+                .field
+                    label.label client_name
+                    .control
+                        input.input(type="text", name="client_name")
+                .field
+                    label.label redirect_uris (개행문자로 구분)
+                    .control
+                        textarea.textarea(name="redirect_uris")
+                .field
+                    .control
+                        button.button(type="submit") 생성

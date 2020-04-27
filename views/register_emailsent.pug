@@ -1,0 +1,8 @@
+extends ./layouts/card_centered.pug
+
+block card-body
+    p.title 만화두레 회원가입
+    p.subtitle 거의 다 됐습니다!
+    if error
+        .notification.is-danger= error
+    p 인증 이메일을 전송했습니다. 이메일을 확인해주세요.#[br]이메일이 오지 않았다면, 스팸메일함을 확인해주시기 바랍니다.

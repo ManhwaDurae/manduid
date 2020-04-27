@@ -1,0 +1,23 @@
+extends ../../layouts/admin.pug
+include ../../mixins/memberFormFields.pug
+
+block container-inner
+    h1.title 운영위원 선임/직책 변경
+    h2.subtitle 운영위원을 선임하거나 운영위원의 직책을 변경합니다.
+    if message
+        .notification= message
+    if error
+        .notification.is-danger= error
+    .box
+        form(action="/admin/executives/appoint", method="POST", enctype="application/x-www-form-urlencoded")
+            +memberFormFields(info || null, false, true)
+            .field
+                label.label 직책
+                .control
+                    .select
+                        select(name="type")
+                            each i in types
+                               option(value=i.id, selected= type == i.id)= i.name
+            .field
+                .control
+                    button.button.is-primary(type="submit") 선임/변경

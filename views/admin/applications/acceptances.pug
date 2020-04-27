@@ -1,0 +1,29 @@
+extends ../../layouts/admin.pug
+
+block container-inner
+    h1.title 입부/재입부 허가내역
+    h2.subtitle 입부/재입부원서 허가내역입니다. 허가되지 않은 원서는 #[a(href="./") 입부/재입부원서]에서 확인할 수 있습니다.
+    table.table.is-striped.is-fullwidth
+        thead
+            tr
+                td 이름
+                td 학번
+                td 승인자
+                td 허가여부
+                td 허가일시
+                td 자세히
+        tbody
+            each i in acceptances
+                tr
+                    td= i.form.name
+                    td= i.form.studentId
+                    td= i.acceptedBy.name
+                    td
+                        if i.accepted
+                            span(style={color: "green"}) 허가
+                        else
+                            span(style={color: "red"}) 불허
+                    td= i.acceptedAt.toString()
+                    td
+                        a(href=`/admin/applications/form/${i.applicationId}`)
+                            button.button.is-link.is-small 자세히

@@ -1,0 +1,43 @@
+extends ../../layouts/admin.pug
+include ../../mixins/memberFormFields.pug
+
+block container-inner
+    h1.title 운영위원직 목록
+    h2.subtitle 운영위원 직책을 열거하고, 새로운 직책을 추가하거나, 시스템 권한을 조정할 수 있습니다.
+    p #[strong 참고] : 회장은 표시되지 않으며, 자동으로 모든 권한이 부여됩니다. 그리고, 운영위원직을 삭제할 시 그 직책을 맡은 운영위원들은 자동으로 제명(회원 제명아님)됩니다.
+        | #[br]#[strong 참고] : 권한 위에 마우스를 올리면 설명이 뜹니다.
+    if error
+        .notification.is-danger= error
+    .table_container
+        table.table.is-hoverable.is-fullwidth
+            thead
+                th 직책 이름 (국문)
+                th 직책 이름 (영문)
+                th 권한
+                th 추가/삭제/저장
+            tbody
+                for i in types.concat({id: 'new', name: '', englishName: '', permissions: []})
+                    tr
+                        form(method="POST", enctype="application/x-www-form-urlencoded")
+                            if i.id != 'new'
+                                input(type="hidden", name="id", value=i.id)
+                            td
+                                input.input(type="input", name="name", value=i.name)
+                            td
+                                input.input(type="input", name="englishName", value=i.englishName)
+                            td
+                                details
+                                    summary 권한 목록
+                                    each description, j in permissions
+                                        .control
+                                            label.checkbox
+                                                input.checkbox(type="checkbox", name="permissions", value=j, checked=i.permissions.some(k => k.permission == j))
+                                                span(title=description)= j
+                            td
+                                if i.id == 'new'
+                                    button.button.is-primary(type="checkbox", name="action", value="create") 추가
+                                else
+                                    .field.is-grouped
+                                        .control
+                                            button.button.is-danger(type="checkbox", name="action", value="delete") 삭제
+                                            button.button(type="checkbox", name="action", value="update") 저장

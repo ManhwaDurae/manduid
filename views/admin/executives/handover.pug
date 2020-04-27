@@ -1,0 +1,20 @@
+extends ../../layouts/admin.pug
+include ../../mixins/memberFormFields.pug
+
+block container-inner
+    h1.title 회장직 인수인계
+    h2.subtitle 회장직을 인수인계합니다.
+    if error
+        .notification.is-danger= error
+    .box
+        form(method="POST", enctype="application/x-www-form-urlencoded")
+            +memberFormFields(null, false, true)
+            .field
+                .control
+                    label.checkbox
+                        input(type="checkbox", name="fireAllExecutives")
+                        |&nbsp;인수인계와 동시에 모든 운영위원 선암해제
+            p(style={color:"red"}) 다시 되돌릴 수 없습니다. 조심하세요.
+            .field
+                .control
+                    button.button(type="submit") 인수인계
