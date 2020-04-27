@@ -13,12 +13,12 @@ export class ExecutiveType extends Model<ExecutiveType> {
 
     @Unique
     @Not(/^회장$/)
-    @Column
+    @Column(DataType.STRING(180))
     name: string;
 
     @Unique
     @Not(/^President$/i)
-    @Column
+    @Column(DataType.STRING(180))
     englishName: string;
 
     @HasMany(() => ExecutivePermission, 'executiveTypeId')

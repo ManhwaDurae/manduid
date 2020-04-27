@@ -12,7 +12,7 @@ export class ApplicationAcceptance extends Model<ApplicationAcceptance> {
 
     @ForeignKey(() => Member)
     @Column
-    accepterId: string;
+    accepterId: number;
 
     @Column
     accepted: boolean;

@@ -3,15 +3,20 @@ import {Table, Column, Model, IsUUID, PrimaryKey, DataType, NotNull, CreatedAt, 
 @Table
 export class OidcSession extends Model<OidcSession> {
     @PrimaryKey
-    @Column
+    @Column(DataType.STRING(180))
     id: string;
 
     @Index
     @Column
     uid: string;
 
-    @Column(DataType.JSON)
-    data: any;
+    @Column(DataType.TEXT)
+    get data(): any {
+        return JSON.parse(this.getDataValue('data'));
+    }
+    set data(value: any) {
+        this.setDataValue('data', JSON.stringify(value));
+    }
 
     @Column(DataType.DATE)
     expiresAt: Date;

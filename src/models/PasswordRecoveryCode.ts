@@ -8,14 +8,14 @@ export class PasswordRecoveryCode extends Model<PasswordRecoveryCode> {
     @NotNull
     @NotEmpty
     @PrimaryKey
-    @Column
+    @Column(DataType.STRING(180))
     code: string;
 
     @AllowNull(false)
     @NotNull
     @NotEmpty
     @ForeignKey(() => User)
-    @Column
+    @Column(DataType.STRING(180))
     id: string;
 
     @AllowNull(false)

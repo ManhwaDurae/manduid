@@ -8,7 +8,7 @@ export class User extends Model<User> {
     @NotNull
     @NotEmpty
     @PrimaryKey
-    @Column
+    @Column(DataType.STRING(180))
     id: string;
 
     @ForeignKey(() => Member)

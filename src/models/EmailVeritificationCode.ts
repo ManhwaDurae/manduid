@@ -7,7 +7,7 @@ export class EmailVeritificationCode extends Model<EmailVeritificationCode> {
     @NotNull
     @NotEmpty
     @PrimaryKey
-    @Column
+    @Column(DataType.STRING(180))
     code: string;
 
     @AllowNull(false)
