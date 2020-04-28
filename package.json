@@ -1,7 +1,7 @@
 {
-  "name": "ruledit",
+  "name": "manduid",
   "version": "1.0.0",
-  "description": "Rule Editor",
+  "description": "Member management and SSO system for manhwadurae",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
