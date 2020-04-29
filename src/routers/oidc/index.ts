@@ -80,6 +80,9 @@ export default function mountProvider(app: Koa, options: {'jwks': any, 'url': st
           }
     });
 
+    app.proxy = true;
+    provider.proxy = true;
+
     app.use(mount(provider.app));
     app.use(mount('/oidc', oidcRouter(provider).routes()));
 }
