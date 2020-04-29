@@ -4,9 +4,9 @@ mixin sideMenuItems(menuData)
         ul.menu-list
             for j in i.items
                 li
-                    a(href=j.href || '#')= i.name
-                        if j.items
-                            ul
-                                each k in j.items
-                                    li
-                                        a(href=k.href)= k.name
+                    a(href=j.href || '#')= j.name
+                    if j.items
+                        ul
+                            each k in j.items
+                                li
+                                    a(href=k.href)= k.name
