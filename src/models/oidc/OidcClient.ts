@@ -8,7 +8,8 @@ export class OidcClient extends Model<OidcClient> {
 
     @Column(DataType.TEXT)
     get data(): any {
-        return JSON.parse(this.getDataValue('data'));
+        let data = this.getDataValue('data') || '{}';
+        return JSON.parse(data);
     }
     set data(value: any) {
         this.setDataValue('data', JSON.stringify(value));
