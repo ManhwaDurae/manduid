@@ -15,6 +15,7 @@ block container-inner
                     th client_secret
                     th client_name
                     th redirect_uris
+                    th post_logout_redirect_uris
                     th 수정/삭제
             tbody
                 for i in clients
@@ -22,7 +23,8 @@ block container-inner
                         td= i.data.client_id
                         td= i.data.client_secret
                         td= i.data.client_name
-                        td= i.data.redirect_uris.join('<br>')
+                        td= i.data.redirect_uris.join(', ')
+                        th= i.data.post_logout_redirect_uris.join(', ')
                         td
                             a(href="/admin/oidc/delete/" + i.id)
                                 button.button.is-small 삭제

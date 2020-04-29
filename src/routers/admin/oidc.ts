@@ -22,11 +22,12 @@ router.get('/delete/:clientId', checkPermission('oidc.delete'), async (ctx: Cont
     }
 });
 router.post('/create', checkPermission('oidc.create'), bodyParser(), async (ctx: Context) => {
-    let {client_name, redirect_uris} = ctx.request.body;
+    let {client_name, redirect_uris, post_logout_redirect_uris} = ctx.request.body;
     let client = {
         client_id: randomstring.generate(15),
         client_secret: randomstring.generate(30),
         client_name,
+        post_logout_redirect_uris : post_logout_redirect_uris.split('\n'),
         redirect_uris: redirect_uris.split('\n')
     }
     await OidcClient.create({id: client.client_id, data: client});
