@@ -10,13 +10,14 @@ import { Roll } from '../../models/Roll';
 import bodyParser from 'koa-bodyparser';
 import { Member } from '../../models/Member';
 import { FindOptions, WhereOptions, Op, CITEXT } from 'sequelize';
+import { EmailSubscription } from '../../models/EmailSubscription';
 
 let router = new Router<DefaultState, Context & ParameterizedContext>();
 router.get('/handover', onlyPresident, async (ctx: Context) => {
     await ctx.render('admin/executives/handover');
 });
 router.post('/handover', onlyPresident, bodyParser(), async (ctx: Context) => {
-    let {studentId, name, fireAllExecutives} = ctx.request.body;
+    let {studentId, name, fireAllExecutives, deleteAllSubscriptions} = ctx.request.body;
     let appointed = await Member.findOne({where:{studentId, name}});
     if (!appointed)
         return await ctx.render('admin/executives/handover', {error: '존재하지 않는 회원입니다.'});
@@ -30,6 +31,9 @@ router.post('/handover', onlyPresident, bodyParser(), async (ctx: Context) => {
 
     if (fireAllExecutives) {
         await Roll.update({isExecutive: false, executiveTypeId: null}, {where: {isExecutive: true}});
+    }
+    if (deleteAllSubscriptions) {
+        await EmailSubscription.truncate();
     }
 
     let me = await ctx.user.$get('member');
@@ -67,6 +71,10 @@ router.get('/types', restrictByPermission('executives.types'), async (ctx: Conte
         "roll.create": "명부에 새로운 회원을 추가해 기록할 수 있는 권한",
         "roll.list": "명부를 열람할 수 있는 권한",
         "roll.update": "명부 및 회원정보를 수정할 수 있는 권한",
+        "subscriptions" : "이메일 구독과 관련된 모든 권한",
+        "subscriptions.create" : "이메일 구독을 추가할 수 있는 권한",
+        "subscriptions.delete" : "이메일 구독을 삭제할 수 있는 권한",
+        "subscriptions.list" : "이메일 구독 목록을 열람할 수 있는 권한"
     }
     await ctx.render('admin/executives/types', { types, permissions });
 });

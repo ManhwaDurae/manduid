@@ -10,6 +10,7 @@ import bodyParser from 'koa-bodyparser';
 import { Member } from '../../models/Member';
 import { FindOptions, WhereOptions, Op } from 'sequelize';
 import { restrictByPermission } from './middleware';
+import { EmailSubscription } from '../../models/EmailSubscription';
 
 let router = new Router<DefaultState, Context & ParameterizedContext>();
 let processApplicationForm = async (form : ApplicationForm, accepter: Member, accept: boolean, reason: string = '') => {

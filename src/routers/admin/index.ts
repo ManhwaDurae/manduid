@@ -7,6 +7,7 @@ import oidcRouter from "./oidc";
 import applicationRouter from './applications'
 import rollRouter from './roll'
 import executivesRouter from './executives'
+import subscriptionsRouter from './subscriptions'
 import { Roll } from '../../models/Roll';
 
 let router = new Router<DefaultState, Context>();
@@ -39,5 +40,7 @@ router.use('/oidc', oidcRouter.routes());
 router.use('/oidc', router.allowedMethods());
 router.use('/executives', executivesRouter.routes());
 router.use('/executives', executivesRouter.allowedMethods());
+router.use('/subscriptions', subscriptionsRouter.routes());
+router.use('/subscriptions', subscriptionsRouter.allowedMethods());
 
 export default router;

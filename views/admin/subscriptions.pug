@@ -1,0 +1,41 @@
+extends ../layouts/admin.pug
+
+block container-inner
+    h1.title 이메일 구독 관리
+    h2.subtitle 이메일 구독을 관리합니다.
+    if message
+        .notification= message
+    if error
+        .notification.is-danger= error
+    .table-container
+        table.table.is-striped.is-fullwidth
+            thead
+                tr
+                    th 구독 종류
+                    th 사용자 ID
+                    th 삭제
+            tbody
+                each i in subscriptions
+                    tr
+                        td= typeDescriptions[i.subscriptionType]
+                        td= i.user.id
+                        td
+                            a(href="/admin/subscriptions/delete/" + i.id)
+                                button.button.is-small 삭제
+        .box
+            form(action="/admin/subscriptions/create", method="POST", enctype="application/x-www-form-urlencoded")
+                h3.title 이메일 구독 추가
+                .field
+                    label.label 계정 ID
+                    .control
+                        input.input(type="text", name="id")
+                .field
+                    label.label 구독 종류
+                    .control
+                        .select
+                            select(name="subscriptionType")
+                                each description, val in typeDescriptions
+                                    option(value=val)= description
+                .field
+                    .control
+                        button.button(type="submit") 추가
