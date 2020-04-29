@@ -15,24 +15,25 @@ export default function (provider: Provider) : Router {
         } = await provider.interactionDetails(ctx.req, ctx.res);
         const client = await provider.Client.find(params.client_id);
     
+        if (!ctx.user) { 
+            return await ctx.redirect('/login?redirect=' + encodeURIComponent(ctx.request.href));
+        }
+
         switch (prompt.name) {
           case 'login': 
-            if (ctx.user) {
-                const result = {
-                    select_account: {},
-                    login: {
-                        account: ctx.user.id,
-                    },
-                };
-            
-                return await provider.interactionFinished(ctx.req, ctx.res, result, {
-                    mergeWithLastSubmission: false,
-                });
-
-            } else {
-                return await ctx.redirect('/login?redirect=' + encodeURIComponent(ctx.request.href));
-            }
+            const result = {
+                select_account: {},
+                login: {
+                    account: ctx.user.id,
+                },
+            };
+        
+            return await provider.interactionFinished(ctx.req, ctx.res, result, {
+                mergeWithLastSubmission: false,
+            });
           case 'consent': 
+            if (ctx.user.id !== session.accountId)
+                session.accountId = ctx.user.id;
             return await provider.interactionFinished(ctx.req, ctx.res, {consent:{rejectedClaims: [], rejectedScopes: [], replace: false}}, {
                 mergeWithLastSubmission: true,
             });

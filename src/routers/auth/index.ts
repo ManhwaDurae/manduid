@@ -54,7 +54,7 @@ router.post('/login', bodyParser(), async (ctx: Context) => {
 router.get('/logout', async (ctx: Context) => {
     let redirect: string = ctx.request.query['redirect'] || '/';
     ctx.session = null;
-    return ctx.redirect(redirect);
+    return ctx.redirect('/oidc/session/end?redirect=' + encodeURIComponent(redirect));
 });
 
 

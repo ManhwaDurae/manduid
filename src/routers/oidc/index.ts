@@ -1,5 +1,5 @@
 import Provider from 'oidc-provider'
-import Koa from 'koa'
+import Koa, { Context } from 'koa'
 import { User } from '../../models/User';
 import adapter from './adapter';
 import oidcRouter from './router';
@@ -77,7 +77,17 @@ export default function mountProvider(app: Koa, options: {'jwks': any, 'url': st
                   session: 'md_oidc_cherry',
                   state: 'md_oidc_durian'
               }
+          },
+          logoutSource : async (ctx, form) => {
+              await ctx.render('sso_logout', {form});
+          },
+          postLogoutSuccessSource: async (ctx) => {
+              await ctx.render('sso_logout', {success: true});
           }
+    });
+    provider.on('end_session.success', async ctx => {
+        ctx.session = null;
+        await ctx.oidc.session.destroy();
     });
 
     app.proxy = true;
