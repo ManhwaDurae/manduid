@@ -1,54 +1,26 @@
 extends layout.pug
+include ../mixins/sideMenuItems.pug
+include ../mixins/navbarMenuItems.pug
 
 block body
-    nav.navbar.is-black
+    - menuData =  [{"name":"회원관리","items":[{"name":"회원추가","href":"/admin/roll/new"},{"name":"회원명부","href":"/admin/roll","items":[{"name":"정회원명부","href":"/admin/roll?rollType=RegularMember"},{"name":"준회원명부","href":"/admin/roll?rollType=AssociateMember"},{"name":"명예회원명부","href":"/admin/roll?rollType=HonoraryMember"}]},{"name":"제적부","href":"/admin/roll?rollType=Expulsive"},{"name":"제명부","href":"/admin/roll?rollType=PermanentExpulsive"}]},{"name":"입부원서관리","items":[{"name":"입부/재입부원서","href":"/admin/applications"},{"name":"입비/재입부 허가내역","href":"/admin/applications/acceptances"}]},{"name":"운영위원 관리","items":[{"name":"회장직 인수인계","href":"/admin/executives/handover"},{"name":"운영위원 목록","href":"/admin/executives/list"},{"name":"운영위원 권한 관리","href":"/admin/executives/appoint"},{"name":"회장직 인수인계","href":"/admin/executives/types"}]},{"name":"시스템 관리","items":[{"name":"OpenID Connect 1.0 Client 관리","href":"/admin/oidc"}]}]
+    
+    nav.navbar.is-danger
         .navbar-brand
             a.navbar-item(href="/admin") 만화두레 회원관리
-    .container(style="margin-top: 10px;")
+            a.navbar-burger(role="button",aria-label="menu",data-target="adminNavbar",aria-expanded="false")
+                span(aria-hidden="true")
+                span(aria-hidden="true")
+                span(aria-hidden="true")
+        .navbar-menu#adminNavbar
+            .navbar-start
+                +navbarMenuItems(menuData)
+    .container.is-fluid(style="margin-top: 10px;")
         .columns
-            .column.is-3
+            .column.is-3.is-hidden-touch
                 aside.menu
-                    p.menu-label 회원관리
-                    ul.menu-list
-                        li
-                            a(href="/admin/roll/new") 회원추가
-                        li
-                            a(href="/admin/roll") 회원명부
-                            ul
-                                li
-                                    a(href="/admin/roll?rollType=RegularMember") 정회원명부
-                                li
-                                    a(href="/admin/roll?rollType=AssociateMember") 준회원명부
-                                li
-                                    a(href="/admin/roll?rollType=HonoraryMember") 명예회원명부
-                        li
-                            a(href="/admin/roll?rollType=Expulsive") 제적부
-                        li
-                            a(href="/admin/roll?rollType=PermanentExpulsive") 제명부
-                    p.menu-label 입부원서관리
-                    ul.menu-list
-                        li
-                            a(href="/admin/applications") 입부/재입부원서
-                        li 
-                            a(href="/admin/applications/acceptances") 입부/재입부 허가내역
-                    p.menu-label 운영위원 관리
-                    ul.menu-list
-                        li
-                            a(href="/admin/executives/handover") 회장직 인수인계
-                        li
-                            a(href="/admin/executives/list") 운영위원 목록
-                        li
-                            a(href="/admin/executives/appoint") 운영위원 선임
-                        li
-                            a(href="/admin/executives/types") 운영위원 권한 관리
-                    p.menu-label 시스템 관리
-                    ul.menu-list
-                        li
-                            a(href="/admin/oidc") OpenID Connect 1.0 Client 관리
-                    p.menu-label 로그아웃
-                    ul.menu-list
-                        li
-                            a(href="/logout") 로그아웃
-            .column.is-9
+                    +sideMenuItems(menuData)
+            .column.is-9-desktop.is-12
                 .container
                     block container-inner
+    script(src="/js/admin.js")

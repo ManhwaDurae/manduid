@@ -1,0 +1,12 @@
+mixin navbarMenuItems(menuData)
+    each i in menuData
+        .navbar-item.has-dropdown.is-hoverable
+            a.navbar-link= i.name
+            .navbar-dropdown
+                each j in i.items
+                    a.navbar-item(href=j.href || '#')= i.name
+                        if j.items
+                            hr.navbar-divider
+                            each k in j.items
+                                a.navbar-item(href=k.href)= k.name
+                            hr.navbar-divider

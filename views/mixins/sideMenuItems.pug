@@ -1,0 +1,12 @@
+mixin sideMenuItems(menuData)
+    each i in menuData
+        p.menu-label= i.name
+        ul.menu-list
+            for j in i.items
+                li
+                    a(href=j.href || '#')= i.name
+                        if j.items
+                            ul
+                                each k in j.items
+                                    li
+                                        a(href=k.href)= k.name
