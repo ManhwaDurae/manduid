@@ -1,6 +1,6 @@
 import Router from '@koa/router';
 import { Next, Context, DefaultState, ParameterizedContext } from 'koa';
-import { onlyPresident, checkPermission } from "./middleware";
+import { onlyPresident, restrictByPermission } from "./middleware";
 import { User } from '../../models/User';
 import { ApplicationForm } from '../../models/ApplicationForm';
 import { ApplicationAcceptance} from '../../models/ApplicationAcceptance'
@@ -39,12 +39,12 @@ router.post('/handover', onlyPresident, bodyParser(), async (ctx: Context) => {
     
     ctx.redirect('/');
 });
-router.get('/list', checkPermission('executives.list'), async (ctx: Context) => {
+router.get('/list', restrictByPermission('executives.list'), async (ctx: Context) => {
     let executives = await Roll.findAll({where:{isExecutive: true}, include: ['executiveType', 'member']});
     let president = await Roll.findOne({where:{isPresident: true}, include: ['member']});
     await ctx.render('admin/executives/list', { executives, president });
 });
-router.get('/types', checkPermission('executives.types'), async (ctx: Context) => {
+router.get('/types', restrictByPermission('executives.types'), async (ctx: Context) => {
     let types = await ExecutiveType.findAll({include: ['permissions']});
     let permissions : {[index in Permission] : string} = {
         'root' : '모든 권한',
@@ -70,7 +70,7 @@ router.get('/types', checkPermission('executives.types'), async (ctx: Context) =
     }
     await ctx.render('admin/executives/types', { types, permissions });
 });
-router.post('/types', checkPermission('executives.types'), bodyParser(), async (ctx : Context) => {
+router.post('/types', restrictByPermission('executives.types'), bodyParser(), async (ctx : Context) => {
     let {action, name, englishName, permissions, id} = ctx.request.body;
     if (typeof permissions === "string")
         permissions = [permissions]
@@ -104,7 +104,7 @@ router.post('/types', checkPermission('executives.types'), bodyParser(), async (
     }
     return ctx.redirect('/admin/executives/types');
 });
-router.get('/fire/:memberId', checkPermission('executives.fire'), async (ctx: Context & ParameterizedContext) => {
+router.get('/fire/:memberId', restrictByPermission('executives.fire'), async (ctx: Context & ParameterizedContext) => {
     let roll = await Roll.findByPk(ctx.params.memberId);
     if (roll) {
         roll.isExecutive = false;
@@ -113,10 +113,10 @@ router.get('/fire/:memberId', checkPermission('executives.fire'), async (ctx: Co
     }
     ctx.redirect('/admin/executives/list');
 });
-router.get('/appoint', checkPermission('executives.appoint'), async (ctx: Context) => {
+router.get('/appoint', restrictByPermission('executives.appoint'), async (ctx: Context) => {
     return await ctx.render('admin/executives/appoint', {types: await ExecutiveType.findAll()});
 });
-router.get('/appoint/:memberId', checkPermission('executives.appoint'), async (ctx: Context & ParameterizedContext) => {
+router.get('/appoint/:memberId', restrictByPermission('executives.appoint'), async (ctx: Context & ParameterizedContext) => {
     let member = await Member.findByPk(ctx.params.memberId, {include: ['roll']});
     if (member) {
         let type = null;
@@ -127,7 +127,7 @@ router.get('/appoint/:memberId', checkPermission('executives.appoint'), async (c
         ctx.redirect('/admin/executives/appoint')
     }
 });
-router.post('/appoint', checkPermission('executives.appoint'), bodyParser(), async (ctx: Context) => {
+router.post('/appoint', restrictByPermission('executives.appoint'), bodyParser(), async (ctx: Context) => {
     let {studentId, name, type} = ctx.request.body;
     let member = await Member.findOne({where:{studentId, name}, include: ['roll']});
     let types = await ExecutiveType.findAll();

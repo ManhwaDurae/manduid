@@ -9,7 +9,7 @@ import { Roll } from '../../models/Roll';
 import bodyParser from 'koa-bodyparser';
 import { Member } from '../../models/Member';
 import { FindOptions, WhereOptions, Op } from 'sequelize';
-import { checkPermission } from './middleware';
+import { restrictByPermission } from './middleware';
 
 let router = new Router<DefaultState, Context & ParameterizedContext>();
 let processApplicationForm = async (form : ApplicationForm, accepter: Member, accept: boolean, reason: string = '') => {
@@ -44,23 +44,23 @@ let processApplicationForm = async (form : ApplicationForm, accepter: Member, ac
         }
     }
 };
-router.get('/', checkPermission('applications.list'), async (ctx: Context) => {
+router.get('/', restrictByPermission('applications.list'), async (ctx: Context) => {
     let forms = await ApplicationForm.findAll({include: [{model: ApplicationAcceptance, required: false}]});
     forms = forms.filter(i => !i.acceptance)
     await ctx.render('admin/applications/forms', {forms});
 });
-router.get('/acceptances', checkPermission('applications.acceptance_list'), async (ctx: Context) => {
+router.get('/acceptances', restrictByPermission('applications.acceptance_list'), async (ctx: Context) => {
     let acceptances = await ApplicationAcceptance.findAll({include: ['form', 'acceptedBy']});
     await ctx.render('admin/applications/acceptances', {acceptances});
 });
-router.get('/form/:formId', checkPermission('applications.detail'), async (ctx: Context & ParameterizedContext) => {
+router.get('/form/:formId', restrictByPermission('applications.detail'), async (ctx: Context & ParameterizedContext) => {
     let form = await ApplicationForm.findByPk(ctx.params.formId);
     if (!form)
         return await ctx.throw(404, '존재하지 않는 원서입니다.');
     let acceptance = await form.$get('acceptance', {include: ['acceptedBy']});
     await ctx.render('admin/applications/form', {form, acceptance});
 });
-router.post('/accept', checkPermission('applications.accept'), bodyParser(), async (ctx: Context & ParameterizedContext) => {
+router.post('/accept', restrictByPermission('applications.accept'), bodyParser(), async (ctx: Context & ParameterizedContext) => {
     let {applicationId, accept, reason} = ctx.request.body;
     let application = await ApplicationForm.findByPk(applicationId)
     if (!application)
@@ -72,7 +72,7 @@ router.post('/accept', checkPermission('applications.accept'), bodyParser(), asy
     await ctx.redirect('/admin/applications/form/' + applicationId)
     
 });
-router.get('/accept/:applicationId', checkPermission('applications.accept'), async (ctx: Context & ParameterizedContext) => {
+router.get('/accept/:applicationId', restrictByPermission('applications.accept'), async (ctx: Context & ParameterizedContext) => {
     let application = await ApplicationForm.findByPk(ctx.params.applicationId)
     if (!application)
         return await ctx.trhow(404, '존재하지 않는 원서입니다.')
@@ -82,7 +82,7 @@ router.get('/accept/:applicationId', checkPermission('applications.accept'), asy
     await processApplicationForm(application, await ctx.user.$get('member'), true);
     await ctx.redirect('/admin/applications')
 });
-router.get('/reject/:applicationId', checkPermission('applications.reject'), async (ctx: Context & ParameterizedContext) => {
+router.get('/reject/:applicationId', restrictByPermission('applications.reject'), async (ctx: Context & ParameterizedContext) => {
     let application = await ApplicationForm.findByPk(ctx.params.applicationId)
     if (!application)
         return await ctx.trhow(404, '존재하지 않는 원서입니다.')

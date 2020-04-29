@@ -3,7 +3,7 @@ import { User } from '../../models/User';
 import { ExecutiveType } from '../../models/ExecutiveType';
 import { ExecutivePermission } from '../../models/ExecutivePermission';
 
-export function checkPermission (permission: Permission) {
+export function restrictByPermission (permission: Permission) {
     return async (ctx: Context, next: Next) => {
         let roll = await (await ctx.user.$get('member')).$get('roll')
         if(roll.isPresident)

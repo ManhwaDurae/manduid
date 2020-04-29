@@ -7,10 +7,10 @@ import { Roll } from '../../models/Roll';
 import bodyParser from 'koa-bodyparser';
 import { Member } from '../../models/Member';
 import { FindOptions, WhereOptions, Op, IncludeOptions } from 'sequelize';
-import { checkPermission } from './middleware';
+import { restrictByPermission } from './middleware';
 
 let router = new Router<DefaultState, Context & ParameterizedContext>();
-router.get('/', checkPermission('roll.list'), async (ctx: Context) => {
+router.get('/', restrictByPermission('roll.list'), async (ctx: Context) => {
     let where : {rollType?: string} = {};
     let searchInfo : {rolls? : Array<string> | string } = {};
     if (ctx.query.rollType) {
@@ -20,7 +20,7 @@ router.get('/', checkPermission('roll.list'), async (ctx: Context) => {
     let result = await Roll.findAll({where, include: [{model: Member, include: [{model: User, required: false}]}]});
     await ctx.render('admin/roll', {roll: result, searchInfo});
 });
-router.post('/', checkPermission('roll.list'), bodyParser(), async (ctx: Context) => {
+router.post('/', restrictByPermission('roll.list'), bodyParser(), async (ctx: Context) => {
     let {schoolRegistration, query, query_type, rolls} = ctx.request.body;
     let findOptions : FindOptions = {where: {}};
     let where : WhereOptions = {};
@@ -57,10 +57,10 @@ router.post('/', checkPermission('roll.list'), bodyParser(), async (ctx: Context
     let result = await Roll.findAll(findOptions);
     await ctx.render('admin/roll', {roll: result, searchInfo : ctx.request.body});
 });
-router.get('/new', checkPermission('roll.create'), async (ctx : Context) => {
+router.get('/new', restrictByPermission('roll.create'), async (ctx : Context) => {
     await ctx.render('admin/roll_fields', {add_member: true});
 });
-router.post('/new', checkPermission('roll.create'), bodyParser(), async (ctx: Context) => {
+router.post('/new', restrictByPermission('roll.create'), bodyParser(), async (ctx: Context) => {
     let {name, studentId, department, birthday, phoneNumber, roll: rollType, schoolRegistration} = <memberFormFields & rollFormFields>ctx.request.body;
     let member = await Member.create({name, studentId, department, birthday: new Date(birthday), phoneNumber});
     let roll = await Roll.create({rollType, schoolRegistration, memberId: member.memberId});
@@ -70,14 +70,14 @@ router.post('/new', checkPermission('roll.create'), bodyParser(), async (ctx: Co
         await ctx.render('admin/roll_fields', {add_member: true, error: '추가 실패'});
     }
 });
-router.get('/update/:memberId', checkPermission('roll.update'), async (ctx: Context & ParameterizedContext) => {
+router.get('/update/:memberId', restrictByPermission('roll.update'), async (ctx: Context & ParameterizedContext) => {
     let roll = await Roll.findByPk(ctx.params.memberId);
     if (!roll)
         await ctx.throw(403, '존재하지 않는 회원입니다.');
     let member = await roll.$get('member');
     await ctx.render('admin/roll_fields', {roll, member});
 });
-router.post('/update/:memberId', checkPermission('roll.update'), bodyParser(), async (ctx: Context & ParameterizedContext) => {
+router.post('/update/:memberId', restrictByPermission('roll.update'), bodyParser(), async (ctx: Context & ParameterizedContext) => {
     let {name, studentId, department, birthday, phoneNumber, roll: rollType, schoolRegistration} = <memberFormFields & rollFormFields>ctx.request.body;
     let roll = await Roll.findByPk(ctx.params.memberId);
     if (!roll)
