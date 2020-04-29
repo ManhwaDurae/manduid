@@ -14,7 +14,7 @@ export class EmailSubscription extends Model<EmailSubscription> {
     subscriptionType: EmailSubscriptionType
 
     @ForeignKey(() => User)
-    @Column
+    @Column(DataType.STRING(180))
     userId: string;
 
     @BelongsTo(() => User, 'userId')
