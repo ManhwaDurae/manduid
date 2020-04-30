@@ -9,6 +9,7 @@ html, body {
 }
 #main-container, #main-container .columns {
     height: 100%;
+    flex-wrap: wrap;
 }
 @media screen and (min-width:769px) {
     #main-container .column.centered_column {
