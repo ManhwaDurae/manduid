@@ -1,8 +1,6 @@
 extends ../layouts/admin.pug
 
 block container-inner
-    - const rollDisplayNames = {'AssociateMember' : '준회원', 'RegularMember' : '정회원', 'HonoraryMember' : '명예회원', 'Explusion' : '제적', 'PermanentExplusion' : '제명'}
-    - const schoolRegistrationDisplayNames = {'Enrolled' : '재학', 'LeaveOfAbsence' : '휴학', 'Graduated' : '졸업', 'Expelled' : '제적'}
     h1.title 회원명부
     h2.subtitle 회원명부입니다.
     form(method="GET")
@@ -50,9 +48,11 @@ block container-inner
             .field.is-horizontal
                 .field-label
                 .field-body
-                    .field
+                    .field.is-grouped
                         .control
                             button.button.is-primary(type="submit") 검색
+                        .control
+                            button.button(type="submit", name="saveAs", value="excel") 검색 후 저장
         .table-container
             table.table.is-striped.is-fullwidth
                 thead
