@@ -22,9 +22,13 @@ router.get('/', restrictByPermission('roll.list'), async (ctx: Context) => {
     let where : WhereOptions = {};
 
     // default value
-    if (!limit)
+    if (limit)
+        limit = Number(limit)
+    else
         limit = 15;
-    if (!page)
+    if (page)
+        page = Number(page)
+    else
         page = 1;
     
     // always as array of string
