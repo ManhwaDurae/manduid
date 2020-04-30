@@ -10,29 +10,33 @@ import { FindOptions, WhereOptions, Op, IncludeOptions } from 'sequelize';
 import { restrictByPermission } from './middleware';
 
 let router = new Router<DefaultState, Context & ParameterizedContext>();
+
 router.get('/', restrictByPermission('roll.list'), async (ctx: Context) => {
-    let where : {rollType?: string} = {};
-    let searchInfo : {rolls? : Array<string> | string } = {};
-    if (ctx.query.rollType) {
-        where.rollType = ctx.query.rollType
-        searchInfo.rolls = ctx.query.rollType;
-    }
-    let result = await Roll.findAll({where, include: [{model: Member, include: [{model: User, required: false}]}]});
-    await ctx.render('admin/roll', {roll: result, searchInfo});
-});
-router.post('/', restrictByPermission('roll.list'), bodyParser(), async (ctx: Context) => {
-    let {schoolRegistration, query, query_type, rolls} = ctx.request.body;
+    let {schoolRegistration, query, query_type, rolls, limit, page} = ctx.request.query;
     let findOptions : FindOptions = {where: {}};
     let where : WhereOptions = {};
+
+    // default value
+    if (!limit)
+        limit = 15;
+    if (!page)
+        page = 1;
+    
+    // always as array of string
     if (typeof schoolRegistration === 'string')
         schoolRegistration = [schoolRegistration];
     if (typeof rolls === 'string')
         rolls = [rolls];
+    
     if (schoolRegistration)
         where.schoolRegistration = {[Op.or] : schoolRegistration};
+    else
+        schoolRegistration = [];
     if (rolls) 
         where.rollType = {[Op.or] : rolls};
-    if (query_type === "userId" && query.trim().length != 0) {
+    else
+        rolls = [];
+    if (query_type === "userId" && typeof query === "string" && query.trim().length != 0) {
         let include : IncludeOptions = {
             model: Member,
             include: [{
@@ -52,10 +56,17 @@ router.post('/', restrictByPermission('roll.list'), bodyParser(), async (ctx: Co
         }];
     } else {
         findOptions.include = ['member'];
+        query = '';
+        query_type = null;
     }
     findOptions.where = where;
+    let count = await Roll.count(findOptions);
+    let pages = Math.ceil(count / limit),
+        offset = (page - 1) * limit;
+    findOptions.limit = limit;
+    findOptions.offset = offset;
     let result = await Roll.findAll(findOptions);
-    await ctx.render('admin/roll', {roll: result, searchInfo : ctx.request.body});
+    await ctx.render('admin/roll', {pages, page, limit, roll: result, searchInfo : {query, query_type, rolls, schoolRegistration}});
 });
 router.get('/new', restrictByPermission('roll.create'), async (ctx : Context) => {
     await ctx.render('admin/roll_fields', {add_member: true});

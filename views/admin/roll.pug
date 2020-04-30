@@ -5,9 +5,11 @@ block container-inner
     - const schoolRegistrationDisplayNames = {'Enrolled' : '재학', 'LeaveOfAbsence' : '휴학', 'Graduated' : '졸업', 'Expelled' : '제적'}
     h1.title 회원명부
     h2.subtitle 회원명부입니다.
-    .box
-        form(method="POST", enctype="application/x-www-form-urlencoded")
-            - searchInfo = Object.assign({query_type: null, query: '', rolls: [], schoolRegistration: []}, searchInfo);
+    form(method="GET")
+        if limit
+            input(type="hidden", name="limit", value=limit)
+            input#page-input(type="hidden", name="page", value=page)
+        .box
             .field.is-horizontal
                 .field-label.is-normal
                     label.label 검색어
@@ -51,28 +53,61 @@ block container-inner
                     .field
                         .control
                             button.button.is-primary(type="submit") 검색
-    .table-container
-        table.table.is-striped.is-fullwidth
-            thead
-                tr
-                    th 명부
-                    th 성명
-                    th 학적
-                    th 학번
-                    th 학과
-                    th 전화번호
-                    th 계정 ID
-                    th 수정
-            tbody
-                for i in roll
+        .table-container
+            table.table.is-striped.is-fullwidth
+                thead
                     tr
-                        td= rollDisplayNames[i.rollType]
-                        td= i.member.name
-                        td= schoolRegistrationDisplayNames[i.schoolRegistration]
-                        td= i.member.studentId
-                        td= i.member.department
-                        td= i.member.phoneNumber
-                        td= i.member.user ? i.member.user.id : ''
-                        td
-                            a(href="/admin/roll/update/" + i.memberId)
-                                button.button.is-small 수정
+                        th 명부
+                        th 성명
+                        th 학적
+                        th 학번
+                        th 학과
+                        th 전화번호
+                        th 계정 ID
+                        th 수정
+                tbody
+                    for i in roll
+                        tr
+                            td= rollDisplayNames[i.rollType]
+                            td= i.member.name
+                            td= schoolRegistrationDisplayNames[i.schoolRegistration]
+                            td= i.member.studentId
+                            td= i.member.department
+                            td= i.member.phoneNumber
+                            td= i.member.user ? i.member.user.id : ''
+                            td
+                                a(href="/admin/roll/update/" + i.memberId)
+                                    button.button.is-small(type="submit") 수정
+        
+        - page = Number(page)
+        - pages = Number(pages)
+        if pages > 0
+            nav.pagination.roll-pagination(role="navigation", aria-label="페이지 이동")
+                if page > 1
+                    a.pagination-previous(data-page= page - 1) 이전
+                if page < pages
+                    a.pagination-next(data-page= page + 1) 다음
+                ul.pagination-list
+                    if page == 1 && pages == 1
+                        li
+                            a.pagination-link.is-current(aria-label="첫번째 페이지", data-page= i, aria-current="page")= page
+                    else
+                        - let first = true, last = true, links = [page - 1, page, page + 1].filter(i => (1 <= i && i <= pages))
+                        - while (links[0] > 1 && links.length < 3) links.unshift(links[0] - 1);
+                        - while (links[links.length - 1] < pages && links.length < 3) links.push(links[links.length - 1] + 1);
+                        - if (links[0] == 1) first = false;
+                        - if (links[links.length - 1] == pages) last = false;
+                        if first
+                            li
+                                a.pagination-link(aria-label=`1번째 페이지`, data-page=1) 1
+                            li
+                                span.pagination-ellipsis &hellip;
+                        each i in links
+                            li
+                                a.pagination-link(aria-label=`${i}번째 페이지`, data-page=i, class={'is-current':page==i})&attributes(page==i?{'aria-current':'page'}:{})= i
+                        if last
+                            li
+                                span.pagination-ellipsis &hellip;
+                            li
+                                a.pagination-link(aria-label=`${pages}번째 페이지`, data-page=pages)= pages
+                    
