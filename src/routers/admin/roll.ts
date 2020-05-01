@@ -151,10 +151,14 @@ router.get('/', restrictByPermission('roll.list'), async (ctx: Context) => {
         includeWhere[query_type] = {[Op.like]: '%' + query + '%'};
         findOptions.include = [{
             model: Member,
+            include: [{model: User, required: false}],
             where: includeWhere
         }];
     } else {
-        findOptions.include = ['member'];
+        findOptions.include = [{
+            model: Member,
+            include: [{model: User, required: false}]
+        }];
         query = '';
         query_type = null;
     }
