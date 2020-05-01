@@ -5,7 +5,8 @@ block card-body
     p.title 만화두레 입부/재입부신청
     if error
         .notification.is-danger= error
-    p 이미 회원이시라면 #[a(href="//id.caumd.club/register") 여기]서 회원가입해서 아이디를 만드세요.#[br]입부/재입부는 이름과 학번을 통해 자동으로 구분됩니다.
+    p 중앙대학교 서울캠퍼스 중앙동아리 만화두레에 오신 것을 환영합니다!#[br]
+    | 온라인 입부신청 오류 발생시 회장단에게 연락해주시기 바랍니다.
     form(method="POST", enctype="application/x-www-form-urlencoded")
         if redirect
             input(type="hidden", name="redirect", value=redirect)
