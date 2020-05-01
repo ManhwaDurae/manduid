@@ -248,6 +248,14 @@ router.post('/new', restrictByPermission('roll.create'), bodyParser(), async (ct
         roll: rollType,
         schoolRegistration
     } = ctx.request.body as memberFormFields & rollFormFields;
+
+    if (studentId && (await Member.findOne({ where: { studentId } }))) {
+        await ctx.render('admin/roll_fields', {
+            add_member: true,
+            error: '이미 존재하는 회원입니다.'
+        });
+    }
+
     const member = await Member.create({
         name,
         studentId,
