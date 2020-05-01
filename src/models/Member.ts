@@ -8,7 +8,8 @@ import {
     Model,
     NotNull,
     PrimaryKey,
-    Table
+    Table,
+    Index
 } from 'sequelize-typescript';
 import { ApplicationForm } from './ApplicationForm';
 import { Roll } from './Roll';
@@ -31,6 +32,7 @@ export class Member extends Model<Member> {
     @Column(DataType.STRING())
     department: string;
 
+    @Index
     @Column(DataType.INTEGER())
     studentId: string;
 
