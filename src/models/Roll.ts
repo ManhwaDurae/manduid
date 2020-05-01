@@ -1,7 +1,15 @@
-import {Table, Column, Model, IsUUID, PrimaryKey, DataType, NotNull, ForeignKey, Default, HasOne, BelongsTo} from 'sequelize-typescript';
-import { ApplicationForm } from './ApplicationForm';
-import { Member } from './Member';
+import {
+    BelongsTo,
+    Column,
+    DataType,
+    Default,
+    ForeignKey,
+    Model,
+    PrimaryKey,
+    Table
+} from 'sequelize-typescript';
 import { ExecutiveType } from './ExecutiveType';
+import { Member } from './Member';
 
 @Table
 export class Roll extends Model<Roll> {
@@ -10,23 +18,31 @@ export class Roll extends Model<Roll> {
     @Column
     memberId: number;
 
-    @Column(DataType.ENUM('AssociateMember', 'RegularMember', 'HonoraryMember', 'Explusion', 'PermanentExplusion'))
-    rollType: RollType
+    @Column(
+        DataType.ENUM(
+            'AssociateMember',
+            'RegularMember',
+            'HonoraryMember',
+            'Explusion',
+            'PermanentExplusion'
+        )
+    )
+    rollType: RollType;
 
     @Default(false)
     @Column
-    isExecutive: boolean
+    isExecutive: boolean;
 
     @Default(false)
     @Column
-    isPresident: boolean
+    isPresident: boolean;
 
     @ForeignKey(() => ExecutiveType)
     @Column
-    executiveTypeId: number
+    executiveTypeId: number;
 
     @Column(DataType.ENUM('Enrolled', 'LeaveOfAbsence', 'Graduated', 'Expelled'))
-    schoolRegistration: SchoolRegistration
+    schoolRegistration: SchoolRegistration;
 
     @BelongsTo(() => Member, 'memberId')
     member: Member;

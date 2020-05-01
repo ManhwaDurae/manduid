@@ -1,7 +1,14 @@
-import {Table, Column, Model, IsUUID, PrimaryKey, DataType, NotNull, ForeignKey, Default, HasOne, BelongsTo, AutoIncrement, Unique, Not, HasMany} from 'sequelize-typescript';
-import { ApplicationForm } from './ApplicationForm';
-import { Member } from './Member';
-import { notDeepEqual } from 'assert';
+import {
+    AutoIncrement,
+    Column,
+    DataType,
+    HasMany,
+    Model,
+    Not,
+    PrimaryKey,
+    Table,
+    Unique
+} from 'sequelize-typescript';
 import { ExecutivePermission } from './ExecutivePermission';
 
 @Table

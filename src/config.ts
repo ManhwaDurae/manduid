@@ -1,5 +1,6 @@
-import path from 'path'
-import SMTPTransport from "nodemailer/lib/smtp-transport";
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import path from 'path';
+import { readFileSync } from 'fs';
 
 interface ConfigFile {
     databaseUri: string;
@@ -8,25 +9,34 @@ interface ConfigFile {
     smtp: SMTPTransport.Options;
     oidcSecretKeys: string[];
     xlsxTemplate: {
-        path: string,
-        sheetName: string,
-        searchInfo : {
-            searcher: string,
-            searchDate: string,
-            resultCount: string
-        },
+        path: string;
+        sheetName: string;
+        searchInfo: {
+            searcher: string;
+            searchDate: string;
+            resultCount: string;
+        };
         searchConditions: {
-            schoolRegistrations: string,
-            rolls: string,
-            query_type: string,
-            query: string
-        },
+            schoolRegistrations: string;
+            rolls: string;
+            query_type: string;
+            query: string;
+        };
         result: {
-            start: string,
-            order: ("rolls" | "name" | "department" | "studentId" | "birthday" | "phoneNumber" | "executiveName" | "accountId")[]
-        }
+            start: string;
+            order: (
+                | 'rolls'
+                | 'name'
+                | 'department'
+                | 'studentId'
+                | 'birthday'
+                | 'phoneNumber'
+                | 'executiveName'
+                | 'accountId')[];
+        };
     };
 }
 
-let config : ConfigFile = require(path.join(process.cwd(), 'config.json'));
-export default config;
+const configFilePath = path.join(process.cwd(), 'config.json');
+const configFile = JSON.parse(readFileSync(configFilePath, { encoding: 'utf8' }));
+export default configFile;

@@ -1,4 +1,15 @@
-import {Table, Column, Model, IsUUID, PrimaryKey, NotNull, NotEmpty, DataType, AllowNull, HasOne, ForeignKey, BelongsTo, AutoIncrement} from 'sequelize-typescript';
+import {
+    AllowNull,
+    AutoIncrement,
+    BelongsTo,
+    Column,
+    DataType,
+    ForeignKey,
+    Model,
+    NotNull,
+    PrimaryKey,
+    Table
+} from 'sequelize-typescript';
 import { User } from './User';
 
 @Table
@@ -11,7 +22,7 @@ export class EmailSubscription extends Model<EmailSubscription> {
     @AllowNull(false)
     @NotNull
     @Column(DataType.ENUM('NewApplication'))
-    subscriptionType: EmailSubscriptionType
+    subscriptionType: EmailSubscriptionType;
 
     @ForeignKey(() => User)
     @Column(DataType.STRING(180))

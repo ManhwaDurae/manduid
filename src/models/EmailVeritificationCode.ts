@@ -1,4 +1,15 @@
-import {Table, Column, Model, IsUUID, PrimaryKey, NotNull, NotEmpty, DataType, AllowNull, HasOne, ForeignKey, BelongsTo} from 'sequelize-typescript';
+import {
+    AllowNull,
+    BelongsTo,
+    Column,
+    DataType,
+    ForeignKey,
+    Model,
+    NotEmpty,
+    NotNull,
+    PrimaryKey,
+    Table
+} from 'sequelize-typescript';
 import { Member } from './Member';
 
 @Table
@@ -19,7 +30,7 @@ export class EmailVeritificationCode extends Model<EmailVeritificationCode> {
     @ForeignKey(() => Member)
     @Column
     memberId: number;
-    
+
     @AllowNull(false)
     @NotNull
     @NotEmpty

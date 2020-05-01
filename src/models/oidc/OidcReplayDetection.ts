@@ -1,4 +1,4 @@
-import {Table, Column, Model, IsUUID, PrimaryKey, DataType, NotNull, CreatedAt, AllowNull, AutoIncrement, ForeignKey, BelongsTo, Index} from 'sequelize-typescript';
+import { Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
 @Table
 export class OidcReplayDetection extends Model<OidcReplayDetection> {
@@ -8,16 +8,14 @@ export class OidcReplayDetection extends Model<OidcReplayDetection> {
 
     @Column(DataType.TEXT)
     get data(): any {
-        let data = this.getDataValue('data') || '{}';
+        const data = this.getDataValue('data') || '{}';
         return JSON.parse(data);
     }
     set data(value: any) {
         this.setDataValue('data', JSON.stringify(value));
     }
 
-    @Column(DataType.DATE)
-    expiresAt: Date;
+    @Column(DataType.DATE) expiresAt: Date;
 
-    @Column(DataType.DATE)
-    consumedAt: Date;
+    @Column(DataType.DATE) consumedAt: Date;
 }

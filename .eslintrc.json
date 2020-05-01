@@ -1,15 +1,22 @@
 
 {
-    "extends": ["airbnb"],
-    "plugins": ["@typescript-eslint"],
-    "parser": "@typescript-eslint/parser",
-    "rules": {
-      "import/no-unresolved": 0,
-      "react/jsx-filename-extension": {
-        "extensions": [
-          ".jsx",
-          ".tsx"
-        ]
-      }
-    }
-  }
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "rules": {
+    "import/no-unresolved": 0,
+    "import/extensions": 0,
+    "@typescript-eslint/camelcase": 0,
+    "require-atomic-updates": 0,
+    "no-console": 0
+  },
+  "overrides": [{
+    "rules": {"@typescript-eslint/no-explicit-any": "off"},
+    "files": ["./src/models/oidc/*.ts", "./src/routers/oidc/adapter/*.ts"]
+  }]
+}

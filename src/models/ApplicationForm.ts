@@ -1,4 +1,16 @@
-import {Table, Column, Model, IsUUID, PrimaryKey, DataType, NotNull, CreatedAt, AllowNull, AutoIncrement, Default, HasOne} from 'sequelize-typescript';
+import {
+    AllowNull,
+    AutoIncrement,
+    Column,
+    CreatedAt,
+    DataType,
+    Default,
+    HasOne,
+    Model,
+    NotNull,
+    PrimaryKey,
+    Table
+} from 'sequelize-typescript';
 import { ApplicationAcceptance } from './ApplicationAcceptance';
 
 @Table
@@ -10,7 +22,7 @@ export class ApplicationForm extends Model<ApplicationForm> {
 
     @Default(false)
     @Column
-    reapplication : boolean
+    reapplication: boolean;
 
     @AllowNull(false)
     @NotNull
@@ -24,7 +36,7 @@ export class ApplicationForm extends Model<ApplicationForm> {
 
     @Column(DataType.INTEGER())
     studentId: string;
-    
+
     @AllowNull(false)
     @NotNull
     @Column(DataType.STRING())

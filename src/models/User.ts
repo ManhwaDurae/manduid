@@ -1,5 +1,15 @@
-import {Table, Column, Model, IsUUID, PrimaryKey, NotNull, NotEmpty, DataType, AllowNull, HasOne, ForeignKey, BelongsTo} from 'sequelize-typescript';
-import { ApplicationForm } from './ApplicationForm';
+import {
+    AllowNull,
+    BelongsTo,
+    Column,
+    DataType,
+    ForeignKey,
+    Model,
+    NotEmpty,
+    NotNull,
+    PrimaryKey,
+    Table
+} from 'sequelize-typescript';
 import { Member } from './Member';
 
 @Table
@@ -14,7 +24,7 @@ export class User extends Model<User> {
     @ForeignKey(() => Member)
     @Column
     memberId: number;
-    
+
     @AllowNull(false)
     @NotNull
     @NotEmpty

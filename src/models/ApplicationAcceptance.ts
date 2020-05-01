@@ -1,7 +1,15 @@
-import {Table, Column, Model, IsUUID, PrimaryKey, DataType, NotNull, CreatedAt, AllowNull, AutoIncrement, ForeignKey, BelongsTo} from 'sequelize-typescript';
-import { User } from './User';
+import {
+    BelongsTo,
+    Column,
+    CreatedAt,
+    ForeignKey,
+    Model,
+    PrimaryKey,
+    Table
+} from 'sequelize-typescript';
 import { ApplicationForm } from './ApplicationForm';
 import { Member } from './Member';
+import { User } from './User';
 
 @Table
 export class ApplicationAcceptance extends Model<ApplicationAcceptance> {
@@ -14,14 +22,11 @@ export class ApplicationAcceptance extends Model<ApplicationAcceptance> {
     @Column
     accepterId: number;
 
-    @Column
-    accepted: boolean;
+    @Column accepted: boolean;
 
-    @Column
-    reason: string;
+    @Column reason: string;
 
-    @CreatedAt
-    acceptedAt: Date;
+    @CreatedAt acceptedAt: Date;
 
     @BelongsTo(() => ApplicationForm)
     form: ApplicationForm;

@@ -1,4 +1,15 @@
-import {Table, Column, Model, IsUUID, PrimaryKey, DataType, NotNull, CreatedAt, AllowNull, AutoIncrement, ForeignKey, HasOne} from 'sequelize-typescript';
+import {
+    AllowNull,
+    AutoIncrement,
+    Column,
+    DataType,
+    ForeignKey,
+    HasOne,
+    Model,
+    NotNull,
+    PrimaryKey,
+    Table
+} from 'sequelize-typescript';
 import { ApplicationForm } from './ApplicationForm';
 import { Roll } from './Roll';
 import { User } from './User';
@@ -22,7 +33,7 @@ export class Member extends Model<Member> {
 
     @Column(DataType.INTEGER())
     studentId: string;
-    
+
     @AllowNull(false)
     @NotNull
     @Column(DataType.STRING())

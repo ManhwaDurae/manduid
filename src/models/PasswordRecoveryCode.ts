@@ -1,5 +1,15 @@
-import {Table, Column, Model, IsUUID, PrimaryKey, NotNull, NotEmpty, DataType, AllowNull, HasOne, ForeignKey, BelongsTo} from 'sequelize-typescript';
-import { Member } from './Member';
+import {
+    AllowNull,
+    BelongsTo,
+    Column,
+    DataType,
+    ForeignKey,
+    Model,
+    NotEmpty,
+    NotNull,
+    PrimaryKey,
+    Table
+} from 'sequelize-typescript';
 import { User } from './User';
 
 @Table
