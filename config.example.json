@@ -10,6 +10,25 @@
             "pass": "smtp password here"
         }
     },
+    "xlsxTemplate": {
+        "path": "template.xlsx",
+        "sheetName": "결과",
+        "searchInfo" : {
+            "searcher": "G3",
+            "searchDate": "G4",
+            "resultCount": "G5"
+        },
+        "searchConditions": {
+            "schoolRegistrations": "I3",
+            "rolls": "I4",
+            "query_type": "I5",
+            "query": "I6"
+        },
+        "result": {
+            "start": "B9",
+            "order": ["rolls", "name", "department", "studentId", "birthday", "phoneNumber", "executiveName", "accountId"]
+        }
+    },
     "httpPort": 80,
     "sessionSecret": ["secret"],
     "oidcSecretKeys": ["secret"]

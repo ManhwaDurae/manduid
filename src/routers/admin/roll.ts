@@ -4,16 +4,106 @@ import { User } from '../../models/User';
 import { ExecutiveType } from '../../models/ExecutiveType';
 import { ExecutivePermission } from '../../models/ExecutivePermission';
 import { Roll } from '../../models/Roll';
+import fs from 'fs'
 import bodyParser from 'koa-bodyparser';
 import { Member } from '../../models/Member';
 import { FindOptions, WhereOptions, Op, IncludeOptions } from 'sequelize';
 import { restrictByPermission } from './middleware';
-import xlsx from 'xlsx';
+import ExcelJs from 'exceljs';
+import tempy from 'tempy'
+import config from '../../config'
+import { Stream } from 'stream';
 
 let router = new Router<DefaultState, Context & ParameterizedContext>();
 
 const rollDisplayNames : {[index in RollType] : string} = {'AssociateMember' : '준회원', 'RegularMember' : '정회원', 'HonoraryMember' : '명예회원', 'Explusion' : '제적', 'PermanentExplusion' : '제명'}
 const schoolRegistrationDisplayNames : {[index in SchoolRegistration] : string} = {'Enrolled' : '재학', 'LeaveOfAbsence' : '휴학', 'Graduated' : '졸업', 'Expelled' : '제적'}
+
+function excelColNameToNumber(colName : string) : number {
+    colName = colName.toUpperCase();
+
+    let sum : number = 0;
+
+    for (let i = 0; i < colName.length; i++) {
+        sum *= 26;
+        sum += colName[i].charCodeAt(i) - 'A'.charCodeAt(0) + 1;
+    }
+
+    return sum;
+}
+
+async function constructXlsx(result: Roll[], searchConditions: {schoolRegistration: SchoolRegistration[], rolls: RollType[], query_type: string, query: string}, searcher: Member, searchDate: Date, stream: Stream) {
+    let workbook = new ExcelJs.Workbook();
+    await workbook.xlsx.readFile(config.xlsxTemplate.path);
+    let worksheet = workbook.getWorksheet(config.xlsxTemplate.sheetName);
+
+    // Insert search info
+    worksheet.getCell(config.xlsxTemplate.searchInfo.searcher).value = searcher.name;
+    worksheet.getCell(config.xlsxTemplate.searchInfo.searcher).value = searcher.name;
+    worksheet.getCell(config.xlsxTemplate.searchInfo.searchDate).value = searchDate;
+    worksheet.getCell(config.xlsxTemplate.searchInfo.resultCount).value = result.length;
+    
+    // Insert search conditions
+    let queryTypeDescriptions : {[index : string]: string;} = {'name' : '이름', 'studentId': '학번', 'phoneNumber' : '전화번호', 'department' : '학과', 'userId' : '계정 아이디'}
+    worksheet.getCell(config.xlsxTemplate.searchConditions.query_type).value = queryTypeDescriptions[searchConditions.query_type] || '';
+    worksheet.getCell(config.xlsxTemplate.searchConditions.query).value = searchConditions.query || '';
+    worksheet.getCell(config.xlsxTemplate.searchConditions.rolls).value = searchConditions.rolls.length == 0 ? "전체" : searchConditions.rolls.map(i => rollDisplayNames[i]).join(", ");
+    worksheet.getCell(config.xlsxTemplate.searchConditions.schoolRegistrations).value = searchConditions.schoolRegistration.length == 0 ? "전체" : searchConditions.schoolRegistration.map(i => schoolRegistrationDisplayNames[i]).join(", ");
+
+    // Insert result
+    let rowNow = Number(/[a-zA-Z]+([0-9]+)/.exec(config.xlsxTemplate.result.start)[1]);
+    const startCol = excelColNameToNumber(/([a-zA-Z]+)/.exec(config.xlsxTemplate.result.start)[1]);
+    let firstRow = true;
+    for (let i of result) {
+        let user = await i.member.$get('user');
+        let executiveName = '';
+        if(i.executiveType) executiveName = i.executiveType.name;
+        else if (i.isPresident) executiveName = '회장';
+
+        let colNow = startCol;
+        for (let j of config.xlsxTemplate.result.order) {
+            let cellNow = worksheet.getCell(rowNow, colNow);
+            if(!firstRow) {
+                let styleTemplateCell = worksheet.getCell(rowNow - 1, colNow);
+                cellNow.style = styleTemplateCell.style;
+            }
+            switch (j) {
+                case "accountId":
+                    if (user)
+                        cellNow.value = user.id
+                break;
+                case "birthday":
+                    cellNow.value = i.member.birthday;
+                break;
+                case "department":
+                    cellNow.value = i.member.department;
+                break;
+                case "executiveName":
+                    cellNow.value = executiveName;
+                break;
+                case "name":
+                    cellNow.value = i.member.name;
+                break;
+                case "phoneNumber":
+                    cellNow.value = i.member.phoneNumber
+                break;
+                case "rolls":
+                    cellNow.value = rollDisplayNames[i.rollType]
+                break;
+                case "studentId":
+                    cellNow.value = i.member.studentId
+                break;
+                default:
+                    continue;
+            }
+            colNow++;
+        }
+        if (firstRow)
+            firstRow = false;
+        rowNow++;
+    }
+    await workbook.xlsx.write(stream);
+}
 
 router.get('/', restrictByPermission('roll.list'), async (ctx: Context) => { 
 
@@ -72,32 +162,16 @@ router.get('/', restrictByPermission('roll.list'), async (ctx: Context) => {
     if (saveAs === "excel") {
         findOptions.include.push({model: ExecutiveType, required: false});
         let result = await Roll.findAll(findOptions);
-        let xlsxData = [
-            ['저장 정보'], ['저장한 사람', (await ctx.user.$get('member')).name, '저장 일시', new Date(), '총 갯수', `${result.length}개`],
-            ['검색 조건'],[
-            '학적', schoolRegistration.length == 0 ? '(전체)' : schoolRegistration.map((i : string) => schoolRegistrationDisplayNames[<SchoolRegistration>i]),
-            '명부', rolls.length == 0 ? '(전체)' : rolls.map((i : string) => rollDisplayNames[<RollType>i]),
-            '검색어 종류', query_type || '(미지정)',
-            '검색어', query],
-            ['결과'],
-            ['명부', '이름', '학과', '학번', '생일', '전화번호', '직책', '계정 ID']
-        ];
-        for (let i of result) {
-            let user = await i.member.$get('user');
-            let executiveName = '';
-            if(i.executiveType) executiveName = i.executiveType.name;
-            else if (i.isPresident) executiveName = '회장';
-            xlsxData.push([rollDisplayNames[i.rollType], i.member.name, i.member.department, i.member.studentId, i.member.birthday, i.member.phoneNumber, executiveName, user ? user.id : ''])
-        }
-        let xlsxWorksheet = xlsx.utils.aoa_to_sheet(xlsxData);
-        let xlsxWorkbook = xlsx.utils.book_new();
-        xlsx.utils.book_append_sheet(xlsxWorkbook, xlsxWorksheet, '결과');
-        let xlsxFiledata : Buffer = xlsx.write(xlsxWorkbook, {bookType: 'xlsx', type: 'buffer'});
 
         ctx.set('Content-Disposition', 'attachment; filename="download.xlsx"');
         ctx.set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 
-        ctx.body = xlsxFiledata;
+        let tmpfile = tempy.file();
+        let writableStream = fs.createWriteStream(tmpfile);
+        await constructXlsx(result, {schoolRegistration,rolls,query,query_type},await ctx.user.$get('member'), new Date(), writableStream);
+        writableStream.end();
+        writableStream.close();
+        ctx.body = fs.createReadStream(tmpfile)
     } else {
         let count = await Roll.count(findOptions);
         let pages = Math.ceil(count / limit),
