@@ -130,6 +130,9 @@ async function constructXlsx(
                 case 'studentId':
                     cellNow.value = i.member.studentId;
                     break;
+                case 'schoolRegistration':
+                    cellNow.value = schoolRegistrationDisplayNames[i.schoolRegistration];
+                    break;
                 default:
                     continue;
             }
@@ -162,16 +165,22 @@ router.get('/', restrictByPermission('roll.list'), async (ctx: Context) => {
     if (rolls) where.rollType = { [Op.or]: rolls };
     else rolls = [];
     if (query_type === 'userId' && typeof query === 'string' && query.trim().length != 0) {
+        const memberIds = (await User.findAll({
+            where: { id: { [Op.like]: '%' + query + '%' } }
+        })).map(i => i.memberId);
         const include: IncludeOptions = {
             model: Member,
             include: [
                 {
                     model: User,
-                    where: {
-                        id: query
-                    }
+                    required: false
                 }
-            ]
+            ],
+            where: {
+                memberId: {
+                    [Op.or]: memberIds
+                }
+            }
         };
         findOptions.include = [include];
     } else if (typeof query === 'string' && query.trim().length != 0) {
