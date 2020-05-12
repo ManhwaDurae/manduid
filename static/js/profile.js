@@ -46,7 +46,7 @@ function showCropModal() {
     var fileReader = new FileReader();
     fileReader.addEventListener('load', function (evt) {
         avatarCropImg.src = evt.target.result;
-        cropper = new Cropper(avatarCropImg, {initialAspectRatio: 1, aspectRatio: 1});
+        cropper = new Cropper(avatarCropImg, {initialAspectRatio: 1, aspectRatio: 1, viewMode: 2});
         avatarCropModal.classList.add('is-active');
     });
 
