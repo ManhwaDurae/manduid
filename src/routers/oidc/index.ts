@@ -6,6 +6,9 @@ import config from '~/config';
 import adapter from './adapter';
 import oidcRouter from './router';
 import { JSONWebKeySet } from 'jose';
+import md5 from 'md5';
+import { Roll } from '~/models/Roll';
+import { ExecutivePermission } from '~/models/ExecutivePermission';
 
 export default function mountProvider(
     app: Koa,
@@ -20,10 +23,31 @@ export default function mountProvider(
                 return {
                     accountId: id,
                     async claims() {
+                        const profile = await user.$get('profile'),
+                            name = (await user.$get('member')).name,
+                            roll = await Roll.findByPk(user.memberId);
+                        let permission: Permission[] = [];
+                        if (roll.isExecutive) {
+                            permission = (await ExecutivePermission.findAll({
+                                where: { executiveTypeId: roll.executiveTypeId }
+                            }))
+                                .map(i => i.permission)
+                                .filter(i => i.startsWith('bbs') || i.startsWith('wiki'));
+                        } else if (roll.isPresident) {
+                            permission = ['root'];
+                        }
                         return {
                             sub: id,
+                            name,
                             email: user.emailAddress,
-                            email_verified: true
+                            email_verified: true,
+                            picture:
+                                'https://id.caumd.club/avatar/' +
+                                md5(user.emailAddress.trim().toLowerCase()),
+                            nickname: profile.nickname || id,
+                            website: profile.website || '',
+                            bio: profile.introduction || '',
+                            permission
                         };
                     }
                 };
@@ -45,6 +69,8 @@ export default function mountProvider(
         },
         claims: {
             openid: ['sub'],
+            profile: ['name', 'nickname', 'profile', 'picture', 'website', 'bio'],
+            email: ['email', 'email_verified'],
             permission: ['permission']
         },
         interactions: {

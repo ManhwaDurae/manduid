@@ -79,7 +79,12 @@ router.get('/types', restrictByPermission('executives.types'), async (ctx: Conte
         subscriptions: '이메일 구독과 관련된 모든 권한',
         'subscriptions.create': '이메일 구독을 추가할 수 있는 권한',
         'subscriptions.delete': '이메일 구독을 삭제할 수 있는 권한',
-        'subscriptions.list': '이메일 구독 목록을 열람할 수 있는 권한'
+        'subscriptions.list': '이메일 구독 목록을 열람할 수 있는 권한',
+        bbs: '게시판과 관련된 모든 권한',
+        'bbs.ban': '게시판에서 이용자를 차단할 수 있는 권한',
+        'bbs.delete': '게시판에서 게시물이나 댓글을 삭제할 수 있는 권한',
+        'bbs.hide': '게시판에서 게시물이나 댓글을 숨길 수 있는 권한',
+        'bbs.manage_boards': '게시판에서 게시판을 생성하거나 관리할 수 있는 권한'
     };
     await ctx.render('admin/executives/types', { types, permissions });
 });

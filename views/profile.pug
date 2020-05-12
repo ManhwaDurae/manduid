@@ -1,0 +1,67 @@
+extends ./layouts/card_centered.pug
+
+block card-body
+    p.title 프로필 수정
+    if message
+        .notification= message
+    if error
+        .notification.is-danger= error
+    p 프로필을 수정할 수 있습니다.
+    input.avatarFile(type="file", style="display: none;")
+    form(action='/profile', method="POST", enctype="application/x-www-form-urlencoded")
+        if referer
+            input(type="hidden", name="referer", accept="image/*", value=referer)
+        input.avatarData(type="hidden", name="avatar")
+        input.avatarMode(type="hidden", name="avatarMode", value="doNothing")
+        label.label 아바타 사진
+        .field.is-grouped.is-grouped-centered
+            p.control
+                figure.image.is-128x128
+                    img.avatarImg(src=avatarUrl, data-fallback-url=avatarFallbackUrl)
+        .field.is-grouped.is-grouped-centered
+            p.control
+                button.button(type="button", id="change-avatar", style={display: hasCustomAvatar ? '' : 'none'}) 변경
+            p.control
+                button.button(type="button", id="remove-avatar", style={display: hasCustomAvatar ? '' : 'none'}).is-danger 삭제
+            p.control
+                button.button(type="button", id="upload-avatar", style={display: hasCustomAvatar ? 'none' : ''}).is-primary 업로드
+        p.help.avatar-help(style="text-align: center; display: none;") 하단 수정 버튼을 눌러야 프로필 사진이 변경됩니다.
+        .field
+            label.label 닉네임
+            .control
+                input.input(type="text", name="nickname", value=profile.nickname placeholder="닉네임", required)
+        .field
+            label.label 웹사이트 주소
+            .control
+                input.input(type="text", name="website", value=profile.website, placeholder="웹사이트 주소")
+        .field
+            label.label 자기소개
+            .control
+                textarea.textarea(type="textarea", name="introduction")=profile.introduction
+        input(type="submit", hidden)
+        if referer
+            .field.is-grouped
+                p.control
+                    button.button(type="submit").is-primary 수정
+                p.control
+                    a(href=referer)
+                        button.button(type="button") 돌아가기
+        else
+            .field
+                .control
+                    button.button(type="submit").is-primary 수정
+    .modal.avatarCropModal
+        .modal-background
+        .modal-card
+            header.modal-card-head
+                p.modal-card-title 자르기
+                button.delete(aria-label="close")
+            section.modal-card-body
+                img.avatarCropImg(style="max-width: 100%;")
+            footer.modal-card-foot
+                button.button(type="button").is-primary.finish-crop 완료
+                button.button(type="button").close-modal 취소
+    link(rel="stylesheet", href="/css/cropper.min.css")
+    script(src="/js/cropper.min.js")
+    script(src="/js/profile.js")
+                    

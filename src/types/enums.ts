@@ -30,5 +30,10 @@ type Permission =
     | 'subscriptions.list'
     | 'subscriptions.create'
     | 'subscriptions.delete'
-    | 'subscriptions';
+    | 'subscriptions'
+    | 'bbs'
+    | 'bbs.delete'
+    | 'bbs.ban'
+    | 'bbs.hide'
+    | 'bbs.manage_boards';
 type EmailSubscriptionType = 'NewApplication';

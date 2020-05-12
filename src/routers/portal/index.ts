@@ -1,5 +1,7 @@
 import Router from '@koa/router';
 import { Context, DefaultState } from 'koa';
+import ProfileRouter from './profile';
+import avatarServer from './avatar';
 
 const router = new Router<DefaultState, Context>();
 router.get('/', async (ctx: Context) => {
@@ -16,5 +18,14 @@ router.get('/', async (ctx: Context) => {
         await ctx.render('index', { user: null });
     }
 });
+router.use('/avatar', avatarServer.routes());
+router.use('/profile', async (ctx, next) => {
+    if (!ctx.user) {
+        return ctx.redirect('/login?redirect=' + encodeURIComponent(ctx.request.href));
+    }
+    await next();
+});
+router.use('/profile', ProfileRouter.routes());
+router.use('/profile', ProfileRouter.allowedMethods());
 
 export default router;

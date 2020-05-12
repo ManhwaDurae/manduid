@@ -8,9 +8,11 @@ import {
     NotEmpty,
     NotNull,
     PrimaryKey,
-    Table
+    Table,
+    HasOne
 } from 'sequelize-typescript';
 import { Member } from './Member';
+import { UserProfile } from './UserProfile';
 
 @Table
 export class User extends Model<User> {
@@ -42,4 +44,7 @@ export class User extends Model<User> {
 
     @BelongsTo(() => Member, 'memberId')
     member: Member;
+
+    @HasOne(() => UserProfile)
+    profile: UserProfile;
 }

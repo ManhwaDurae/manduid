@@ -1,4 +1,12 @@
-import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import {
+    AutoIncrement,
+    Column,
+    ForeignKey,
+    Model,
+    PrimaryKey,
+    Table,
+    DataType
+} from 'sequelize-typescript';
 import { ExecutiveType } from './ExecutiveType';
 
 @Table
@@ -12,5 +20,5 @@ export class ExecutivePermission extends Model<ExecutivePermission> {
     @Column
     executiveTypeId: number;
 
-    @Column permission: string;
+    @Column(DataType.STRING) permission: Permission;
 }
