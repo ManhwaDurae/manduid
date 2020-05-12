@@ -47,12 +47,10 @@ export class UserProfile extends Model<UserProfile> {
     }
 
     async avatarUrl(): Promise<string> {
-        return '/avatar/' + (await this.avatarUid());
-        //return 'https://id.caumd.club/avatar/' + md5(user.emailAddress.trim().toLowerCase());
+        return 'https://id.caumd.club/avatar/' + (await this.avatarUid());
     }
 
     async avatarFallbackUrl(): Promise<string> {
         return (await this.avatarUrl()) + '?fallback=yes';
-        //return 'https://id.caumd.club/avatar/' + md5(user.emailAddress.trim().toLowerCase());
     }
 }
