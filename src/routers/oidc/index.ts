@@ -2,6 +2,7 @@ import Koa from 'koa';
 import mount from 'koa-mount';
 import Provider from 'oidc-provider';
 import { User } from '~/models/User';
+import { UserProfile } from '~/models/UserProfile';
 import config from '~/config';
 import adapter from './adapter';
 import oidcRouter from './router';
@@ -23,9 +24,13 @@ export default function mountProvider(
                 return {
                     accountId: id,
                     async claims() {
-                        const profile = await user.$get('profile'),
+                        const [profile, profileCreated] = await UserProfile.findOrCreate({where: {id: user.id}}),
                             name = (await user.$get('member')).name,
                             roll = await Roll.findByPk(user.memberId);
+                        if (profileCreated) {
+                            profile.id = user.id;
+                            await profile.save();
+                        }
                         let permission: Permission[] = [];
                         if (roll.isExecutive) {
                             permission = (await ExecutivePermission.findAll({
