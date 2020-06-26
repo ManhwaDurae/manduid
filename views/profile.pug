@@ -1,7 +1,9 @@
-extends ./layouts/card_centered.pug
+extends ./layouts/right_card_wide.pug
+
+block card-title
+    h1.title 프로필 수정
 
 block card-body
-    p.title 프로필 수정
     if message
         .notification= message
     if error

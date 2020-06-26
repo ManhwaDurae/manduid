@@ -1,8 +1,9 @@
-extends ./layouts/card_centered.pug
+extends ./layouts/right_card_wide.pug
+
+block card-title
+    h1.title 만화두레
 
 block card-body
-    p.title 만화두레
-    p.subtitle 만화동아리
     if user
         .content
             p

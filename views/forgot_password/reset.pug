@@ -1,8 +1,9 @@
-extends ../layouts/card_centered.pug
+extends ../layouts/right_card.pug
+
+block card-title
+    h1.title 비밀번호 재설정
 
 block card-body
-    p.title 비밀번호 재설정
-    p.subtitle 비밀번호 재설정
     p 새로 쓸 비밀번호를 입력해주세요.
     if error
         .notification.is-danger= error

@@ -1,12 +1,16 @@
-extends ./layouts/card_centered.pug
+extends ./layouts/right_card.pug
+
+block card-title
+    if success
+        h1.title 로그아웃 완료
+    else
+        h1.title SSO 로그아웃
 
 block card-body
     if success
-        p.title 로그아웃 완료
         p 로그아웃했습니다. 잠시후 메인 페이지로 돌아갑니다.
         script!= 'setTimeout(function(){location.href = "/";}, 1500);'
     else
-        p.title SSO 로그아웃
         p 잠시만 기다려주세요.
         div!= form
         script!= 'var p = document.getElementById("op.logoutForm");var h = document.createElement("input");h.setAttribute("type", "hidden");h.setAttribute("name", "logout");h.setAttribute("name", "yes"); p.appendChild(h);p.submit();'

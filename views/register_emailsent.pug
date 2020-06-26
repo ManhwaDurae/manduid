@@ -1,7 +1,9 @@
-extends ./layouts/card_centered.pug
+extends ./layouts/right_card.pug
+
+block card-title
+    h1.title 만화두레 회원가입
 
 block card-body
-    p.title 만화두레 회원가입
     p.subtitle 거의 다 됐습니다!
     if error
         .notification.is-danger= error

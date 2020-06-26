@@ -1,8 +1,10 @@
-extends ./layouts/card_centered.pug
+extends ./layouts/right_card_wide.pug
 include ./mixins/memberFormFields.pug
 
+block card-title
+    h1.title 입부/재입부신청
+
 block card-body
-    p.title 만화두레 입부/재입부신청
     if error
         .notification.is-danger= error
     p 중앙대학교 서울캠퍼스 중앙동아리 만화두레에 오신 것을 환영합니다!#[br]
@@ -11,5 +13,10 @@ block card-body
         if redirect
             input(type="hidden", name="redirect", value=redirect)
         +memberFormFields
-        .field
-            button.button.is-primary(type="submit") 신청
+        .level
+            .level-left
+            .level-right
+                .level-item
+                    .field
+                        .control
+                            button.button.is-primary(type="submit") 신청

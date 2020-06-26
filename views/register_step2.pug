@@ -1,8 +1,9 @@
-extends ./layouts/card_centered.pug
+extends ./layouts/right_card_wide.pug
+
+block card-title
+    h1.title 회원가입
 
 block card-body
-    p.title 만화두레 회원가입
-    p.subtitle 아이디, 비밀번호 입력
     if error
         .notification.is-danger= error
     p 사용하실 아이디와 비밀번호, 그리고 이메일 주소를 입력해주세요.

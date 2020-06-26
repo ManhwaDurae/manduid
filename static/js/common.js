@@ -5,3 +5,4 @@ for(var i = 0; i < goBackButtons.length; i++)
         evt.preventDefault();
         history.back();
     });
+

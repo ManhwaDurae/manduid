@@ -1,12 +1,8 @@
-extends ./layouts/card_centered.pug
-
-block head
-    link(rel="stylesheet", href="/css/error_card_centered.css")
+extends ./layouts/right_card_error.pug
 
 block card-body
-    p.title 오류
     if status
-        p.subtitle HTTP Error #{status}
+        p HTTP Error #{status}
     if error
         p= error
     else

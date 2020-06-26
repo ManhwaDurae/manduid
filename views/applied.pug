@@ -1,10 +1,11 @@
-extends ./layouts/card_centered.pug
+extends ./layouts/right_card_wide.pug
 include ./mixins/memberFormFields.pug
 
-block card-body
+block card-title
     if reapplication
-        p.title 만화두레 재입부신청
-        p 만화두레 재입부신청이 완료됐습니다.
+        h1.title 재입부신청 완료
     else
-        p.title 만화두레 입부신청.
-        p 만화두레 입부신청이 완료됐습니다.
+        h1.title 입부신청 완료
+
+block card-body
+    p 신청이 정상적으로 접수됐습니다.
