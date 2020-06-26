@@ -25,9 +25,13 @@ export class UserProfile extends Model<UserProfile> {
     id: string;
 
     //@Column hasCustomAvator: boolean;
-    @Column introduction: string;
+    @Default('')
+    @Column
+    introduction: string;
 
-    @Column website: string;
+    @Default('')
+    @Column
+    website: string;
 
     @Default(
         () =>
