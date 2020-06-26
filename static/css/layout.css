@@ -27,3 +27,9 @@ html, body, .is-fullsize {
 .is-shadowed {
     box-shadow: 1px 2px black;
 }
+.has-no-overflow {
+    overflow-y: hidden;
+}
+.right-card {
+    overflow-y: scroll;
+}
